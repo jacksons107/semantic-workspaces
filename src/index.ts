@@ -1,9 +1,8 @@
-import { Workspace } from "./workspace";
-import { tmuxCommandsOfWorkspace } from "./tmux-commands-of-workspace";
-import { runWorkspace } from "./run-workspace";
+import { Workspace, Session } from "./workspace";
+import { runSession } from "./run-workspace";
 
-const workspace: Workspace = {
-    name: "mvp",
+const workspace1: Workspace = {
+    name: "mvp1",
     layout: "tiled",
     resources: [
         {
@@ -24,4 +23,38 @@ const workspace: Workspace = {
     ]
 };
 
-runWorkspace(workspace);
+const workspace2: Workspace = {
+    name: "mvp2",
+    layout: "tiled",
+    resources: [
+        {
+            kind: "editor",
+            id: 0,
+            file: "/Users/jacksonslipock/Desktop/artifact-ui/restart.sh"
+        },
+        {
+            kind: "agent",
+            id: 1,
+            agent: "claude"
+        }
+    ]
+}
+
+const workspace3: Workspace = {
+    name: "mvp3",
+    layout: "tiled",
+    resources: [
+        {
+            kind: "editor",
+            id: 0,
+            file: "/Users/jacksonslipock/Desktop/artifact-ui/README.md"
+        }
+    ]
+}
+
+const workspaces: Workspace[] = [workspace1, workspace2, workspace3];
+const session: Session = {
+    workspaces: workspaces
+};
+
+runSession(session);

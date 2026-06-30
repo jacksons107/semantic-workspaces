@@ -47,5 +47,10 @@ function bashCommandOfResource(resource: Resource): string {
                 case "typescript": return "npx ts-node";
                 case "python":     return "python3";
             }
+        case "agent":
+            switch (resource.agent) {
+                case "claude": return "claude";
+                case "codex": return "codex";
+            }
     }
 }
