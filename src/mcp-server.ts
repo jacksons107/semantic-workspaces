@@ -2,9 +2,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { createSession, addNewWorkspace, addResource, createEditorResource, createREPLResource, createAgentResource, Session, stringOfSession } from "./session";
-import { runSession } from "./run-workspace";
+import { runSession, runWorkspaceTmux, runWorkspaceGhostty } from "./run-session";
 import { LAYOUTS, LANGUAGES, AGENTS, Workspace } from "./workspace";
 
+
+const BACKEND = runWorkspaceGhostty;
 
 type Result<T> =
   | { ok: true; value: T }
@@ -119,7 +121,7 @@ server.registerTool("run_session", {
   if (names.length === 0) {
     return { content: [{ type: "text", text: "No workspaces to run. Call add_workspace first." }] };
   }
-  runSession(session);
+  runSession(session, BACKEND);
   return {
     content: [{
       type: "text",

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { stringOfTmuxCommand } from "../src/string-of-tmux-command";
+import { stringOfTmuxCommand } from "../src/backends/tmux/string-of-tmux-command";
 
 describe("stringOfTmuxCommand", () => {
   it("kill-session", () => {

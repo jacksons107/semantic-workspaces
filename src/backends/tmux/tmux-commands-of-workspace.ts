@@ -1,5 +1,6 @@
-import { Resource, Workspace } from "./workspace";
+import { Workspace } from "../../workspace";
 import { TmuxCommand } from "./tmux-command";
+import { bashCommandOfResource } from "../bash-command-of-resource";
 
 export function tmuxCommandsOfWorkspace(workspace: Workspace): TmuxCommand[] {
   const { name, resources, layout } = workspace;
@@ -7,6 +8,7 @@ export function tmuxCommandsOfWorkspace(workspace: Workspace): TmuxCommand[] {
 
   const commands: TmuxCommand[] = [];
 
+  // TODO maybe we shouldn't kill the session
   // kill old session if it exits, then start a new one
   commands.push({ name: "kill-session", flags: ["t"], address: name, arg: "" });
   commands.push({ name: "new-session", flags: ["d", "s"], arg: name });
@@ -36,21 +38,4 @@ export function tmuxCommandsOfWorkspace(workspace: Workspace): TmuxCommand[] {
   });
 
   return commands;
-}
-
-function bashCommandOfResource(resource: Resource): string {
-  switch (resource.kind) {
-    case "editor":
-      return `nvim ${resource.file}`;
-    case "repl":
-      switch (resource.language) {
-        case "typescript": return "npx ts-node";
-        case "python": return "python3";
-      }
-    case "agent":
-      switch (resource.agent) {
-        case "claude": return "claude";
-        case "codex": return "codex";
-      }
-  }
 }
