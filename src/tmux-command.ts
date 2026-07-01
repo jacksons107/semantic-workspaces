@@ -20,23 +20,23 @@ tmux send-keys -t parser:0.2 "node" Enter
  */
 
 export interface TmuxCommand {
-    name: TmuxCommandName;
-    flags: TmuxFlags[];
-    arg: string;
-    address?: string;
-    bashCommand?: string;
+  name: TmuxCommandName;
+  flags: TmuxFlags[];
+  arg: string;
+  address?: string;
+  bashCommand?: string;
 }
 
-type TmuxCommandName = 
-    | "kill-session"
-    | "new-session"
-    | "split-window"
-    | "select-layout"
-    | "send-keys"
+type TmuxCommandName =
+  | "kill-session"
+  | "new-session"
+  | "split-window"
+  | "select-layout"
+  | "send-keys"
 
 type TmuxFlags =
-    | "t"
-    | "d"
-    | "s"
-    | "h"
-    | "v"
+  | "t"
+  | "d"
+  | "s"
+  | "h"
+  | "v"
