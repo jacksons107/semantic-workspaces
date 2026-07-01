@@ -1,16 +1,11 @@
-
-export interface Session {
-    workspaces: Workspace[];
-}
-
 export interface Workspace {
     name: string;
     layout: Layout;
     resources: Resource[];
 }
 
-export type Layout = 
-    | "tiled"
+export const LAYOUTS = ["tiled"] as const;
+export type Layout = typeof LAYOUTS[number];
 
 export type Resource = 
     | EditorResource
@@ -19,7 +14,7 @@ export type Resource =
 
 interface BasicResource {
     kind: string
-    id: number
+    name: string
 }
 
 export interface EditorResource extends BasicResource {
@@ -27,18 +22,16 @@ export interface EditorResource extends BasicResource {
     file: string
 }
 
-export type Language =
-    | "typescript"
-    | "python"
+export const LANGUAGES = ["typescript", "python"] as const;
+export type Language = typeof LANGUAGES[number];
 
 export interface REPLResource extends BasicResource {
     kind: "repl";
     language: Language
 }
 
-export type Agent =
-    | "claude"
-    | "codex"
+export const AGENTS = ["claude", "codex"] as const;
+export type Agent = typeof AGENTS[number];
 
 export interface AgentResource extends BasicResource {
     kind: "agent";

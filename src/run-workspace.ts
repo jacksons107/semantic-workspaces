@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
-import { Workspace, Session } from "./workspace";
+import { Workspace } from "./workspace";
+import { Session } from "./session";
 import { tmuxCommandsOfWorkspace } from "./tmux-commands-of-workspace";
 import { stringOfTmuxCommand } from "./string-of-tmux-command";
 
@@ -17,7 +18,7 @@ function runWorkspace(workspace: Workspace): void {
 }
 
 export function runSession(session: Session): void {
-    for (const workspace of session.workspaces) {
+    for (const [_, workspace] of session.workspaces) {
         runWorkspace(workspace);
     }
 }
