@@ -1,35 +1,23 @@
 /**
- * Ghostty's AppleScript API (see Ghostty.sdef, e.g. via
- * `plutil -extract OSAScriptingDefinition xml1 -o - .../Ghostty.app/Contents/Info.plist`
- * to find it, then read the .sdef XML directly) exposes a hierarchy of
- * application -> windows -> tabs -> terminals.
+ * Each terminal created within a single script is captured into its own AppleScript variable
+ * (terminal0, terminal1, ...) and every later command in that same script
+ * addresses its target terminal explicitly by that variable.
  *
- * Working AppleScript, confirmed against Ghostty.sdef:
+ * Each `osascript` invocation is a fresh process, so local variables like
+ * `terminal0` do not survive across separate runs — reconnecting to a
+ * terminal created by a *previous* run instead requires the terminal's
+ * stable `id` property. A GhosttyTerminalRef captures this distinction: "new" refers to a
+ * variable set earlier in the *same* script, "existing" refers to a
+ * terminal from a prior run by persisted id.
  *
- * tell application "Ghostty"
- *     set terminal0 to focused terminal of (new tab in front window)
- *     input text "pwd" to terminal0
- *     send key "enter" to terminal0
- *     set terminal1 to split terminal0 direction right
- * end tell
- *
- * input text, send key, and split all take a terminal *specifier* as their
- * target — they do not require operating on "whatever is currently
- * focused". So rather than relying on focus state (which does not
- * necessarily follow a freshly created split), each terminal a workspace
- * creates is captured into its own AppleScript variable at creation time
- * (terminal0, terminal1, ...) and every later command addresses its target
- * terminal explicitly by that variable, mirroring how tmux addresses panes
- * by index (`session:pane`) instead of "the active pane".
- *
- * input text pastes text into the terminal but does not submit it (bracketed
+ * Input text pastes text into the terminal but does not submit it (bracketed
  * paste keeps the newline as literal data), so every input-text command must
  * be followed by a send-key "enter" to actually run it.
  *
  * Each Workspace becomes a tab. Each Resource in the workspace becomes a
  * terminal within that tab: the first resource is the tab's initial
- * terminal (terminal0), and later resources are created via `split` of an
- * earlier terminal.
+ * terminal, and later resources are created via `split` of an earlier
+ * terminal (which may be new-in-this-script or existing-from-a-prior-run).
  *
  * Note: tab/terminal `name` is a read-only property in the sdef, so there
  * is no way to set a custom tab title — `new-tab` therefore carries no
@@ -38,8 +26,12 @@
 
 export type GhosttySplitDirection = "right" | "left" | "down" | "up";
 
+export type GhosttyTerminalRef =
+  | { kind: "new"; localIndex: number }
+  | { kind: "existing"; id: string }
+
 export type GhosttyCommand =
-  | { kind: "new-tab"; terminalIndex: number }
-  | { kind: "split"; sourceIndex: number; targetIndex: number; direction: GhosttySplitDirection }
-  | { kind: "input-text"; terminalIndex: number; text: string }
-  | { kind: "send-key"; terminalIndex: number; key: string }
+  | { kind: "new-tab"; localIndex: number }
+  | { kind: "split"; source: GhosttyTerminalRef; targetLocalIndex: number; direction: GhosttySplitDirection }
+  | { kind: "input-text"; terminal: GhosttyTerminalRef; text: string }
+  | { kind: "send-key"; terminal: GhosttyTerminalRef; key: string }

@@ -2,11 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { createSession, addNewWorkspace, addResource, createEditorResource, createREPLResource, createAgentResource, Session, stringOfSession } from "./session";
-import { runSession, runWorkspaceTmux, runWorkspaceGhostty } from "./run-session";
+import { runWorkspaceDiffGhostty } from "./run-session";
+import { diffSession } from "./session-diff";
 import { LAYOUTS, LANGUAGES, AGENTS, Workspace } from "./workspace";
 
-
-const BACKEND = runWorkspaceGhostty;
+let lastRunSession: Session | null = null;
+const ghosttyTerminalIds = new Map<string, string[]>();
 
 type Result<T> =
   | { ok: true; value: T }
@@ -115,17 +116,27 @@ server.registerTool("get_session", {
 });
 
 server.registerTool("run_session", {
-  description: "Launch all configured workspaces as tmux sessions.",
+  description: "Render the session in Ghostty, only creating what's new since the last run.",
 }, () => {
   const names = [...session.workspaces.keys()];
   if (names.length === 0) {
     return { content: [{ type: "text", text: "No workspaces to run. Call add_workspace first." }] };
   }
-  runSession(session, BACKEND);
+
+  const diffs = diffSession(lastRunSession, session);
+
+  for (const diff of diffs) {
+    const existingIds = ghosttyTerminalIds.get(diff.workspace.name) ?? [];
+    const updatedIds = runWorkspaceDiffGhostty(diff, existingIds);
+    ghosttyTerminalIds.set(diff.workspace.name, updatedIds);
+  }
+
+  lastRunSession = session;
+
   return {
     content: [{
       type: "text",
-      text: `Launched ${names.length} tmux session(s): ${names.join(", ")}.\nRun \`tmux choose-tree -s\` to attach.`,
+      text: `Rendered ${names.length} workspace(s): ${names.join(", ")}.`,
     }],
   };
 });

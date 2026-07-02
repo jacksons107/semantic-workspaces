@@ -56,7 +56,7 @@ export function addNewWorkspace(
 
   return {
     ...session,
-    workspaces: session.workspaces.set(name, workspace)
+    workspaces: new Map(session.workspaces).set(name, workspace)
   };
 }
 
@@ -91,6 +91,6 @@ export function addResource(workspace: Workspace, resource: Resource, currentSes
   const newWorkspace = createWorkspace(workspace.name, workspace.layout, [...workspace.resources, resource]);
   return {
     ...currentSession,
-    workspaces: currentSession.workspaces.set(workspace.name, newWorkspace)
+    workspaces: new Map(currentSession.workspaces).set(workspace.name, newWorkspace)
   };
 }
