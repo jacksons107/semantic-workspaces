@@ -18,15 +18,7 @@ describe("tmuxCommandsOfWorkspace", () => {
     expect(tmuxCommandsOfWorkspace(workspace)).toMatchInlineSnapshot(`
       [
         {
-          "address": "parser",
-          "arg": "",
-          "flags": [
-            "t",
-          ],
-          "name": "kill-session",
-        },
-        {
-          "arg": "parser",
+          "arg": "semantic-workspaces",
           "flags": [
             "d",
             "s",
@@ -34,7 +26,24 @@ describe("tmuxCommandsOfWorkspace", () => {
           "name": "new-session",
         },
         {
-          "address": "parser:0",
+          "address": "semantic-workspaces:parser",
+          "arg": "",
+          "flags": [
+            "t",
+          ],
+          "name": "kill-window",
+        },
+        {
+          "address": "semantic-workspaces",
+          "arg": "parser",
+          "flags": [
+            "t",
+            "n",
+          ],
+          "name": "new-window",
+        },
+        {
+          "address": "semantic-workspaces:parser",
           "arg": "",
           "flags": [
             "t",
@@ -43,7 +52,7 @@ describe("tmuxCommandsOfWorkspace", () => {
           "name": "split-window",
         },
         {
-          "address": "parser:0",
+          "address": "semantic-workspaces:parser",
           "arg": "",
           "flags": [
             "t",
@@ -52,7 +61,7 @@ describe("tmuxCommandsOfWorkspace", () => {
           "name": "split-window",
         },
         {
-          "address": "parser:0",
+          "address": "semantic-workspaces:parser",
           "arg": "tiled",
           "flags": [
             "t",
@@ -60,7 +69,7 @@ describe("tmuxCommandsOfWorkspace", () => {
           "name": "select-layout",
         },
         {
-          "address": "parser:0.0",
+          "address": "semantic-workspaces:parser.0",
           "arg": "",
           "bashCommand": "nvim src/parser.ts",
           "flags": [
@@ -69,7 +78,7 @@ describe("tmuxCommandsOfWorkspace", () => {
           "name": "send-keys",
         },
         {
-          "address": "parser:0.1",
+          "address": "semantic-workspaces:parser.1",
           "arg": "",
           "bashCommand": "python3",
           "flags": [
@@ -78,7 +87,7 @@ describe("tmuxCommandsOfWorkspace", () => {
           "name": "send-keys",
         },
         {
-          "address": "parser:0.2",
+          "address": "semantic-workspaces:parser.2",
           "arg": "",
           "bashCommand": "claude",
           "flags": [
@@ -110,15 +119,7 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
     expect(tmuxCommandsOfWorkspaceDiff(diff)).toMatchInlineSnapshot(`
       [
         {
-          "address": "parser",
-          "arg": "",
-          "flags": [
-            "t",
-          ],
-          "name": "kill-session",
-        },
-        {
-          "arg": "parser",
+          "arg": "semantic-workspaces",
           "flags": [
             "d",
             "s",
@@ -126,7 +127,24 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
           "name": "new-session",
         },
         {
-          "address": "parser:0",
+          "address": "semantic-workspaces:parser",
+          "arg": "",
+          "flags": [
+            "t",
+          ],
+          "name": "kill-window",
+        },
+        {
+          "address": "semantic-workspaces",
+          "arg": "parser",
+          "flags": [
+            "t",
+            "n",
+          ],
+          "name": "new-window",
+        },
+        {
+          "address": "semantic-workspaces:parser",
           "arg": "tiled",
           "flags": [
             "t",
@@ -134,7 +152,7 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
           "name": "select-layout",
         },
         {
-          "address": "parser:0.0",
+          "address": "semantic-workspaces:parser.0",
           "arg": "",
           "bashCommand": "nvim src/parser.ts",
           "flags": [
@@ -165,7 +183,7 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
     expect(tmuxCommandsOfWorkspaceDiff(diff)).toMatchInlineSnapshot(`
       [
         {
-          "address": "parser:0",
+          "address": "semantic-workspaces:parser",
           "arg": "",
           "flags": [
             "t",
@@ -174,7 +192,7 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
           "name": "split-window",
         },
         {
-          "address": "parser:0.1",
+          "address": "semantic-workspaces:parser.1",
           "arg": "",
           "bashCommand": "python3",
           "flags": [
@@ -209,7 +227,7 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
     expect(tmuxCommandsOfWorkspaceDiff(diff)).toMatchInlineSnapshot(`
       [
         {
-          "address": "parser:0",
+          "address": "semantic-workspaces:parser",
           "arg": "",
           "flags": [
             "t",
@@ -218,7 +236,7 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
           "name": "split-window",
         },
         {
-          "address": "parser:0.1",
+          "address": "semantic-workspaces:parser.1",
           "arg": "",
           "bashCommand": "python3",
           "flags": [
@@ -227,7 +245,7 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
           "name": "send-keys",
         },
         {
-          "address": "parser:0",
+          "address": "semantic-workspaces:parser",
           "arg": "",
           "flags": [
             "t",
@@ -236,7 +254,7 @@ describe("tmuxCommandsOfWorkspaceDiff", () => {
           "name": "split-window",
         },
         {
-          "address": "parser:0.2",
+          "address": "semantic-workspaces:parser.2",
           "arg": "",
           "bashCommand": "claude",
           "flags": [

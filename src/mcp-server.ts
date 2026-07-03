@@ -2,11 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { createSession, addNewWorkspace, addResource, createEditorResource, createREPLResource, createAgentResource, Session, stringOfSession } from "./session";
-import { runWorkspaceDiffGhostty } from "./run-session";
+import { runWorkspaceDiffGhostty, runWorkspaceDiffTmux } from "./run-session";
 import { diffSession } from "./session-diff";
 import { LAYOUTS, LANGUAGES, AGENTS, Workspace } from "./workspace";
 
-let lastRunSession: Session | null = null;
+let lastRunSessionGhostty: Session | null = null;
+let lastRunSessionTmux: Session | null = null;
 const ghosttyTerminalIds = new Map<string, string[]>();
 
 type Result<T> =
@@ -123,7 +124,7 @@ server.registerTool("run_session", {
     return { content: [{ type: "text", text: "No workspaces to run. Call add_workspace first." }] };
   }
 
-  const diffs = diffSession(lastRunSession, session);
+  const diffs = diffSession(lastRunSessionGhostty, session);
 
   for (const diff of diffs) {
     const existingIds = ghosttyTerminalIds.get(diff.workspace.name) ?? [];
@@ -131,12 +132,36 @@ server.registerTool("run_session", {
     ghosttyTerminalIds.set(diff.workspace.name, updatedIds);
   }
 
-  lastRunSession = session;
+  lastRunSessionGhostty = session;
 
   return {
     content: [{
       type: "text",
       text: `Rendered ${names.length} workspace(s): ${names.join(", ")}.`,
+    }],
+  };
+});
+
+server.registerTool("run_session_tmux", {
+  description: "Render the session in tmux, as windows in a shared session, only creating what's new since the last tmux run.",
+}, () => {
+  const names = [...session.workspaces.keys()];
+  if (names.length === 0) {
+    return { content: [{ type: "text", text: "No workspaces to run. Call add_workspace first." }] };
+  }
+
+  const diffs = diffSession(lastRunSessionTmux, session);
+
+  for (const diff of diffs) {
+    runWorkspaceDiffTmux(diff);
+  }
+
+  lastRunSessionTmux = session;
+
+  return {
+    content: [{
+      type: "text",
+      text: `Rendered ${names.length} workspace(s) in tmux: ${names.join(", ")}.`,
     }],
   };
 });

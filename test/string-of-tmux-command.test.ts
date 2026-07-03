@@ -14,6 +14,24 @@ describe("stringOfTmuxCommand", () => {
     })).toMatchInlineSnapshot(`"tmux new-session -d -s mvp"`);
   });
 
+  it("new-session for the shared anchor session", () => {
+    expect(stringOfTmuxCommand({
+      name: "new-session", flags: ["d", "s"], arg: "semantic-workspaces"
+    })).toMatchInlineSnapshot(`"tmux new-session -d -s semantic-workspaces"`);
+  });
+
+  it("kill-window", () => {
+    expect(stringOfTmuxCommand({
+      name: "kill-window", flags: ["t"], address: "semantic-workspaces:mvp", arg: ""
+    })).toMatchInlineSnapshot(`"tmux kill-window -t semantic-workspaces:mvp"`);
+  });
+
+  it("new-window", () => {
+    expect(stringOfTmuxCommand({
+      name: "new-window", flags: ["t", "n"], address: "semantic-workspaces", arg: "mvp"
+    })).toMatchInlineSnapshot(`"tmux new-window -t semantic-workspaces -n mvp"`);
+  });
+
   it("split-window horizontal", () => {
     expect(stringOfTmuxCommand({
       name: "split-window", flags: ["t", "h"], address: "mvp:0", arg: ""

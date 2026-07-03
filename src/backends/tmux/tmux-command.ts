@@ -19,6 +19,10 @@ tmux send-keys -t parser:0.1 "nvim src/lexer.ts" Enter
 tmux send-keys -t parser:0.2 "node" Enter
  */
 
+// Session shared by every workspace; workspaces are windows within it rather
+// than sessions of their own.
+export const TMUX_ANCHOR_SESSION = "semantic-workspaces";
+
 export interface TmuxCommand {
   name: TmuxCommandName;
   flags: TmuxFlags[];
@@ -30,6 +34,8 @@ export interface TmuxCommand {
 type TmuxCommandName =
   | "kill-session"
   | "new-session"
+  | "kill-window"
+  | "new-window"
   | "split-window"
   | "select-layout"
   | "send-keys"
@@ -40,3 +46,4 @@ type TmuxFlags =
   | "s"
   | "h"
   | "v"
+  | "n"

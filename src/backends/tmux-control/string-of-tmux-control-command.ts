@@ -1,7 +1,7 @@
-import { TmuxCommand } from "./tmux-command";
+import { TmuxCommand } from "../tmux/tmux-command";
 
-export function stringOfTmuxCommand(cmd: TmuxCommand): string {
-  const parts: string[] = ["tmux", cmd.name];
+export function stringOfTmuxControlCommand(cmd: TmuxCommand): string {
+  const parts: string[] = [cmd.name];
   let argConsumed = false;
 
   for (const flag of cmd.flags) {
