@@ -11,6 +11,7 @@ export type Resource =
   | EditorResource
   | REPLResource
   | AgentResource
+  | DiffResource
 
 interface BasicResource {
   kind: string
@@ -36,4 +37,10 @@ export type Agent = typeof AGENTS[number];
 export interface AgentResource extends BasicResource {
   kind: "agent";
   agent: Agent;
+}
+
+export interface DiffResource extends BasicResource {
+  kind: "diff";
+  ref: string;     // e.g. "main", "HEAD~3", or "" for working tree vs HEAD
+  paths: string[]; // e.g. ["src/foo.ts"], or [] for the whole repo
 }

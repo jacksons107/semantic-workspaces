@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { createSession, addNewWorkspace, addResource, createEditorResource, createREPLResource, createAgentResource, Session, stringOfSession } from "./session";
+import { createSession, addNewWorkspace, addResource, createEditorResource, createREPLResource, createAgentResource, createDiffResource, Session, stringOfSession } from "./session";
 import { runWorkspaceDiffGhostty, runWorkspaceDiffTmux } from "./run-session";
 import { diffSession } from "./session-diff";
 import { LAYOUTS, LANGUAGES, AGENTS, Workspace } from "./workspace";
@@ -102,6 +102,25 @@ server.registerTool("add_agent", {
 
   session = addResource(workspace.value, createAgentResource(name, agent), session);
   return { content: [{ type: "text", text: `Agent "${name}" (${agent}) added to workspace "${workspaceName}".` }] };
+});
+
+server.registerTool("add_diff", {
+  description: "Add a diff viewer pane (git diff | delta) to a workspace.",
+  inputSchema: z.object({
+    workspaceName: z.string().describe("Name of the workspace to add the diff viewer to"),
+    name: z.string().describe("Unique name for this resource"),
+    ref: z.string().optional().describe("Git ref/commit to diff against (e.g. \"main\", \"HEAD~3\"). Omit for working tree vs HEAD."),
+    paths: z.array(z.string()).optional().describe("File paths/globs to restrict the diff to. Omit for the whole repo."),
+  }),
+}, ({ workspaceName, name, ref, paths }) => {
+  const workspace: Result<Workspace> = getWorkspace(workspaceName, session);
+
+  if (!workspace.ok) {
+    return { content: [{ type: "text", text: workspace.error }] };
+  }
+
+  session = addResource(workspace.value, createDiffResource(name, ref ?? "", paths ?? []), session);
+  return { content: [{ type: "text", text: `Diff viewer "${name}" added to workspace "${workspaceName}".` }] };
 });
 
 server.registerTool("get_session", {

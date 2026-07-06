@@ -14,5 +14,12 @@ export function bashCommandOfResource(resource: Resource): string {
         case "claude": return "claude";
         case "codex": return "codex";
       }
+    case "diff": {
+      const parts = ["git", "diff"];
+      if (resource.ref) parts.push(resource.ref);
+      if (resource.paths.length > 0) parts.push("--", ...resource.paths);
+      parts.push("| delta");
+      return parts.join(" ");
+    }
   }
 }
